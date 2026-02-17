@@ -1,0 +1,37 @@
+<div class="container">
+  <h1>URL Shortener</h1>
+
+  <% if notice %>
+    <p class="notice"><%= notice %></p>
+  <% end %>
+
+  <h2>URLs Recientes</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>URL Original</th>
+        <th>URL Corta</th>
+        <th>User email</th>
+        <th>Clicks</th>
+        <th>Fecha de creacion</th>
+        <th>&nbsp;</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @recent_urls.each do |url| %>
+        <tr>
+          <td><%= truncate(url.original_url, length: 50) %></td>
+          <td data-controller="clipboard">
+            <span data-clipboard-target="source"><%= link_to short_url(url), short_url(url) %></span>
+            <button type="button" data-action="clipboard#copy">Copiar</button>
+            <span data-clipboard-target="tooltip" class="tooltip"></span>
+          </td>
+          <td><%= url.user&.email || "Anónimo" %></td>
+          <td><%= url.clicks.count %></td>
+          <td><%= url.created_at.strftime("%d/%m/%Y %H:%M") %></td>
+          <td><%= button_to "Eliminar", admin_url_path(url), method: :delete %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

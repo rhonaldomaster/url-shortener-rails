@@ -1,0 +1,58 @@
+<div class="container">
+  <h1>URL Shortener</h1>
+
+  <% if notice %>
+    <p class="notice"><%= notice %></p>
+  <% end %>
+
+  <%= form_with model: @url, local: true do |f| %>
+    <% if @url.errors.any? %>
+      <div class="errors">
+        <% @url.errors.full_messages.each do |message| %>
+          <p><%= message %></p>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="form-group">
+      <%= f.label :original_url, "URL a acortar" %>
+      <%= f.url_field :original_url, placeholder: "https://ejemplo.com/una-url-muy-larga", required: true %>
+    </div>
+    <div class="form-group">
+      <%= f.label :short_code, "Código personalizado (opcional)" %>
+      <%= f.text_field :short_code, placeholder: "mi-link" %>
+    </div>
+    <div class="form-group">
+      <%= f.label :expires_at, "Fecha de expiración (opcional)" %>
+      <%= f.datetime_local_field :expires_at %>
+    </div>
+
+    <%= f.submit "Acortar URL" %>
+  <% end %>
+
+  <hr>
+
+  <h2>URLs Recientes</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>URL Original</th>
+        <th>URL Corta</th>
+        <th>Clicks</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @recent_urls.each do |url| %>
+        <tr>
+          <td><%= truncate(url.original_url, length: 50) %></td>
+          <td data-controller="clipboard">
+            <span data-clipboard-target="source"><%= link_to short_url(url), short_url(url) %></span>
+            <button type="button" data-action="clipboard#copy">Copiar</button>
+            <span data-clipboard-target="tooltip" class="tooltip"></span>
+          </td>
+          <td><%= url.clicks.count %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
